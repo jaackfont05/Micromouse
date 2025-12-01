@@ -639,4 +639,3 @@ bool drawSolution2(int start, int current, disjointSet& cells, set<pair<int,int>
 
 	return false;
 }
-
