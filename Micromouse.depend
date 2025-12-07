@@ -1,0 +1,36 @@
+# depslib dependency file v1.0
+1764630083 source:c:\users\jack fontenot\desktop\algorithms\micromouse\sdl_plotter.cpp
+	"SDL_Plotter.h"
+
+1765130085 c:\users\jack fontenot\desktop\algorithms\micromouse\sdl_plotter.h
+	<SDL2/SDL.h>
+	<SDL2/SDL_mixer.h>
+	<string.h>
+	<iostream>
+	<string>
+	<string.h>
+	<map>
+	<queue>
+
+1765130994 source:c:\users\jack fontenot\desktop\algorithms\micromouse\main.cpp
+	<iostream>
+	<fstream>
+	<string>
+	<cmath>
+	<ctime>
+	<stack>
+	<set>
+	"DisJointSet.h"
+	"SDL_Plotter.h"
+	"Racer.h"
+	"constants.h"
+
+1765130131 c:\users\jack fontenot\desktop\algorithms\micromouse\disjointset.h
+	<vector>
+
+1764630083 c:\users\jack fontenot\desktop\algorithms\micromouse\racer.h
+	"SDL_Plotter.h"
+	"constants.h"
+
+1764630083 c:\users\jack fontenot\desktop\algorithms\micromouse\constants.h
+

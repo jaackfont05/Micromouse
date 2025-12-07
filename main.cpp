@@ -2,6 +2,8 @@
 #include <fstream>
 #include <string>
 #include <cmath>
+#include <ctime>
+#include <stack>
 #include <set>
 #include "DisJointSet.h"
 #include "SDL_Plotter.h"
@@ -74,11 +76,11 @@ int main(int argc, char ** argv)
 
 	srand(time(0));
 
-	//buildMaze(false, cells, walls, g);
-    //saveMaze(walls, "wallMaze1.txt");
+	buildMaze(false, cells, walls, g);
+    saveMaze(walls, "wallMaze1.txt");
     readMaze(walls, "wallMaze1.txt");
 	drawMaze(walls,g);
-	//drawMaze("maze5.txt",g);
+	drawMaze("maze5.txt",g);
 
 	robot.draw(g);
 
