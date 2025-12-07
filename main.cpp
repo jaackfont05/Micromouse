@@ -9,6 +9,7 @@
 #include "SDL_Plotter.h"
 #include "Racer.h"
 #include "constants.h"
+#include "Racer1.h"
 using namespace std;
 
 void drawCircle(point loc, int size, color c, SDL_Plotter& g);
@@ -66,6 +67,7 @@ int main(int argc, char ** argv)
     Uint32 RGB;
 
     Racer robot{};
+    Racer* r1 = new Racer1();
 
 	disjointSet cells(row*col);
 	set<pair<int,int> > walls;
@@ -107,13 +109,17 @@ int main(int argc, char ** argv)
 				switch(toupper(g.getKey())){
 					case 'C': g.clear();
 							  break;
-					case 'S': solveMaze(walls, g); break;
+					case 'L': solveMaze(walls, g); break;
 					case 'R': saveMaze(walls);     break;
 					case 'P': printMaze(walls);    break;
 					case RIGHT_ARROW: robot.move(EAST); break;
 					case LEFT_ARROW:  robot.move(WEST); break;
 					case UP_ARROW:    robot.move(NORTH); break;
 					case DOWN_ARROW:  robot.move(SOUTH); break;
+					case 'D': cout << robot.look(EAST,g) << endl; break;
+					case 'A': cout << robot.look(WEST,g) << endl; break;
+					case 'W': cout << robot.look(NORTH,g) << endl; break;
+					case 'S': cout << robot.look(SOUTH,g) << endl; break;
 				}
 				robot.draw(g);
 				g.update();

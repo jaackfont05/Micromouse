@@ -80,7 +80,7 @@ Uint32 Racer::look(DIRECTION direction, SDL_Plotter& g){
 
 	cout <<"x = " << startX  << " y = " <<startY << " ";
 	see = g.getColor(startX , startY);
-	g.plotPixel(startX , startY,255,25,25);
+	//g.plotPixel(startX , startY,255,25,25);
 
 	return see;
 }
