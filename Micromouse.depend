@@ -12,7 +12,7 @@
 	<map>
 	<queue>
 
-1765130994 source:c:\users\jack fontenot\desktop\algorithms\micromouse\main.cpp
+1765146830 source:c:\users\jack fontenot\desktop\algorithms\micromouse\main.cpp
 	<iostream>
 	<fstream>
 	<string>
@@ -24,13 +24,20 @@
 	"SDL_Plotter.h"
 	"Racer.h"
 	"constants.h"
+	"Racer1.h"
 
-1765130131 c:\users\jack fontenot\desktop\algorithms\micromouse\disjointset.h
+1765131958 c:\users\jack fontenot\desktop\algorithms\micromouse\disjointset.h
 	<vector>
 
-1764630083 c:\users\jack fontenot\desktop\algorithms\micromouse\racer.h
+1765135945 c:\users\jack fontenot\desktop\algorithms\micromouse\racer.h
 	"SDL_Plotter.h"
 	"constants.h"
 
 1764630083 c:\users\jack fontenot\desktop\algorithms\micromouse\constants.h
+
+1765155060 c:\users\jack fontenot\desktop\algorithms\micromouse\racer1.h
+	"Racer.h"
+	<queue>
+	<stack>
+	<utility>
 

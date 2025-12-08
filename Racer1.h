@@ -8,8 +8,32 @@
 
 using namespace std;
 
+struct edge;
+
+struct pointR{
+    int x, y;
+    vector<edge> e;
+    bool v = false;
+    bool path = false;
+    bool start = false;
+    bool finish = false;
+    bool d = false;
+};
+
+struct edge{
+    vector<DIRECTION> path;
+    pointR a();
+    pointR b();
+};
+
 static int runNum = 0;
-static vector<vector<pair<int, DIRECTION>>> graph(20, vector<pair<int, DIRECTION>> (35));
+
+const int SN = 100; //Sleep number
+
+struct edge;
+struct pointR;
+
+static pointR graph[35][20];
 
 class Racer1 : public Racer{
 private:
@@ -24,6 +48,187 @@ public:
 
     Racer1(){
         runNum++;
+    }
+
+    bool legalMove(Uint32 u){return u != 0;}
+
+    void run(SDL_Plotter& g){
+        cout << runNum << endl;
+        if(runNum == 1){
+                    cout << "Starting Build Graph phase" << endl;
+
+            buildG(g);
+
+                    cout << "Ending Build Graph phase and returning results" << endl;
+
+
+
+            for (int i = 0; i < 20; i++) {
+                for (int j = 0; j < 35; j++) {
+                    cout << graph[i][j].v << " ";
+                }
+                cout << endl;
+            }
+        }
+    }
+
+    void buildG(SDL_Plotter& g){
+        runNum++;
+
+        pointR currP;
+        pointR finP;
+
+        currP.start = true;
+        currP.v = true;
+        //currP.path = true;//Path should be mainly at the end
+        currP.x = 0; currP.y = 0;
+
+        //finP.path = true;//Path should be mainly at the end
+        finP.finish = true;
+
+        graph[0][0] = currP;
+        graph[34][19] = finP;
+
+        traverse(currP, g);
+    }
+
+    void traverse(pointR start, SDL_Plotter& g){
+
+        recTraverse(start, EAST, g);
+        //recTraverse(start, DIRECTION.SOUTH, g);
+    }
+
+    void recTraverse(pointR currP, DIRECTION d, SDL_Plotter& g){
+        pointR newP;
+        draw(g);
+        g.update();
+        graph[currP.y][currP.x].v = true;
+        int count = 0;
+
+        if(look(NORTH, g) != 0){count++;}
+        if(look(SOUTH, g) != 0){count++;}
+        if(look(EAST, g) != 0){count++;}
+        if(look(WEST, g) != 0){count++;}
+
+        if(count > 1){
+            currP.d = true;
+        }
+
+
+
+        g.Sleep(SN);
+
+        //Check North
+        cout << "Look NORTH: " << look(NORTH,g) << endl;
+        if (look(NORTH,g) != 0 && currP.y > 0 && !graph[currP.y-1][currP.x].v) {
+            newP = currP;
+            newP.y--;
+            move(NORTH);
+
+            recTraverse(newP, NORTH, g);
+
+            draw(g);
+            g.update();
+            g.Sleep(SN);
+        }
+        cout << endl;
+            for (int i = 0; i < 20; i++) {
+                for (int j = 0; j < 35; j++) {
+                    cout << graph[j][i].v << " ";
+                }
+                cout << endl;
+            }
+
+        //Check South
+        cout << "Look SOUTH: " << look(SOUTH,g) << endl;
+        if (look(SOUTH,g) != 0 && currP.y < 20 && !graph[currP.y+1][currP.x].v) {
+            newP = currP;
+            newP.y++;
+            move(SOUTH);
+
+            recTraverse(newP, SOUTH, g);
+
+            draw(g);
+            g.update();
+            g.Sleep(SN);
+        }
+        cout << endl;
+                    for (int i = 0; i < 20; i++) {
+                for (int j = 0; j < 35; j++) {
+                    cout << graph[j][i].v << " ";
+                }
+                cout << endl;
+            }
+
+        //Check West
+        cout << "Look WEST: " << look(WEST,g) << endl;
+        if (look(WEST,g) != 0 && currP.x > 0 && !graph[currP.y][currP.x-1].v) {
+            newP = currP;
+            newP.x--;
+            move(WEST);
+
+            recTraverse(newP, WEST, g);
+
+            draw(g);
+            g.update();
+            g.Sleep(SN);
+        }
+        cout << endl;
+                    for (int i = 0; i < 20; i++) {
+                for (int j = 0; j < 35; j++) {
+                    cout << graph[j][i].v << " ";
+                }
+                cout << endl;
+            }
+
+
+        //Check East
+        cout << "Look EAST: " << look(EAST,g) << endl;
+        if (look(EAST,g) != 0 && currP.x < 35 && !graph[currP.y][currP.x+1].v) {
+            newP = currP;
+            newP.x++;
+            move(EAST);
+
+            recTraverse(newP, EAST, g);
+
+            draw(g);
+            g.update();
+            g.Sleep(SN);
+        }
+        cout << endl;
+                    for (int i = 0; i < 20; i++) {
+                for (int j = 0; j < 35; j++) {
+                    cout << graph[j][i].v << " ";
+                }
+                cout << endl;
+            }
+
+
+        //If you reach this point you hit a dead end
+        //Make racer move backwards
+        if (d == NORTH && look(SOUTH, g) != 0) {
+            move(SOUTH);
+        }
+        else if (d == SOUTH && look(NORTH, g) != 0) {
+            move(NORTH);
+        }
+        else if (d == EAST && look(WEST, g) != 0) {
+            if (!currP.start) move (WEST);
+        }
+        else if (d == WEST && look(EAST, g) != 0) {
+            move (EAST);
+        }
+
+        draw(g);
+        g.update();
+        g.Sleep(SN);
+
+
+        return;
+        /*if(look(d, g) != 0){
+            move(d);
+
+        }*/
     }
 
     queue<DIRECTION> Djikstras(vector<vector<pair<int,DIRECTION>>> data,int s,int endpoint){
@@ -91,5 +296,6 @@ public:
         path.pop();
     }
 };
+
 
 #endif // RACER1_H_

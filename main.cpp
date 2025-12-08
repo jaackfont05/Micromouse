@@ -66,8 +66,8 @@ int main(int argc, char ** argv)
     int size;
     Uint32 RGB;
 
-    Racer robot{};
-    Racer* r1 = new Racer1();
+    Racer1 robot{};
+    //Racer* r1 = new Racer1();
 
 	disjointSet cells(row*col);
 	set<pair<int,int> > walls;
@@ -86,9 +86,10 @@ int main(int argc, char ** argv)
 
 	robot.draw(g);
 
+	//changed
 	for(int x = 100; x <= 122; x++){
-		g.plotPixel(x,111,255,0,0);
-		g.plotPixel(103,x,255,0,0);
+		//g.plotPixel(x,111,255,0,0);
+		//g.plotPixel(103,x,255,0,0);
 	}
 
 
@@ -101,12 +102,19 @@ int main(int argc, char ** argv)
 	see = robot.look(WEST,g); cout << see << endl;
 
 
+    //Racer* racerBase;
+
+
+    //racerBase = &racer;
+
+
 
     while (!g.getQuit())
     {
     	if(robot.racing()){
 			if(g.kbhit()){
 				switch(toupper(g.getKey())){
+				    case 'F': robot.run(g); break;
 					case 'C': g.clear();
 							  break;
 					case 'L': solveMaze(walls, g); break;
@@ -145,6 +153,9 @@ bool legalMove(Racer& r, const set<pair<int,int> >& walls){
 
 	int cell1 = p1.y * col + p1.x;
 	int cell2 = p2.y * col + p2.x;
+
+	//changed
+	if(p1.x == p2.x && p1.y == p2.y) return 1;
 
 	if(p1.x < 0 || p1.y < 0 || p2.x < 0 || p2.y < 0) return 1;
 	if(p1.x >= row || p1.y >= col || p2.x >= row || p2.y >= col) return 1;
@@ -189,6 +200,7 @@ void drawCircle(point loc, int size, color c, SDL_Plotter& g){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void drawMaze(set<pair<int,int> >& walls, SDL_Plotter& g){
+    //mark
 	Color color = {255,0,0};
 	color.r = color.g = color.b = 0;
 	g.clear();
@@ -211,6 +223,7 @@ void drawMaze(set<pair<int,int> >& walls, SDL_Plotter& g){
 }
 
 void buildMaze(bool fast, disjointSet& cells,set<pair<int,int> >& walls, SDL_Plotter& g){
+    //mark
 	Color color = {255,0,0};
 	color.r = color.g = color.b = 0;
 	int cell1;
