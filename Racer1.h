@@ -11,13 +11,23 @@ using namespace std;
 struct edge;
 
 struct pointR{
-    int x, y;
+    int x = 0;
+    int y = 0;
     vector<edge> e;
     bool v = false;
     bool path = false;
     bool start = false;
     bool finish = false;
     bool d = false;
+    bool N = false;
+    bool S = false;
+    bool E = false;
+    bool W = false;
+    bool wall = false;
+
+    //Dijkstras
+    size_t shortestPath = 100000; //Arbitrarily large number for this
+    pointR* pred;
 };
 
 struct edge{
@@ -28,12 +38,12 @@ struct edge{
 
 static int runNum = 0;
 
-const int SN = 100; //Sleep number
+const int SN = 10; //Sleep number
 
 struct edge;
 struct pointR;
 
-static pointR graph[35][20];
+static pointR graph[20][35];
 
 class Racer1 : public Racer{
 private:
@@ -69,6 +79,19 @@ public:
                 }
                 cout << endl;
             }
+
+            cout << endl;
+            cout << "wall:" << endl;
+            for (int i = 0; i < 20; i++) {
+                for (int j = 0; j < 35; j++) {
+                    if(graph[i][j].wall){
+                        cout << "W ";
+                    }else{
+                        cout << graph[i][j].v << " ";
+                    }
+                }
+                cout << endl;
+            }
         }
     }
 
@@ -87,7 +110,9 @@ public:
         finP.finish = true;
 
         graph[0][0] = currP;
-        graph[34][19] = finP;
+        graph[19][34] = finP;
+
+        graph[0][0].shortestPath = 0;
 
         traverse(currP, g);
     }
@@ -98,12 +123,15 @@ public:
         //recTraverse(start, DIRECTION.SOUTH, g);
     }
 
-    void recTraverse(pointR currP, DIRECTION d, SDL_Plotter& g){
+    bool recTraverse(pointR currP, DIRECTION d, SDL_Plotter& g){
         pointR newP;
         draw(g);
         g.update();
         graph[currP.y][currP.x].v = true;
+
+
         int count = 0;
+        bool flag = false;
 
         if(look(NORTH, g) != 0){count++;}
         if(look(SOUTH, g) != 0){count++;}
@@ -119,93 +147,78 @@ public:
         g.Sleep(SN);
 
         //Check North
-        cout << "Look NORTH: " << look(NORTH,g) << endl;
+        //cout << "Look NORTH: " << look(NORTH,g) << endl;
         if (look(NORTH,g) != 0 && currP.y > 0 && !graph[currP.y-1][currP.x].v) {
+
             newP = currP;
             newP.y--;
             move(NORTH);
 
             recTraverse(newP, NORTH, g);
+            currP.N = true;
 
             draw(g);
             g.update();
             g.Sleep(SN);
         }
-        cout << endl;
-            for (int i = 0; i < 20; i++) {
-                for (int j = 0; j < 35; j++) {
-                    cout << graph[j][i].v << " ";
-                }
-                cout << endl;
-            }
+
+
 
         //Check South
-        cout << "Look SOUTH: " << look(SOUTH,g) << endl;
+        //cout << "Look SOUTH: " << look(SOUTH,g) << endl;
         if (look(SOUTH,g) != 0 && currP.y < 20 && !graph[currP.y+1][currP.x].v) {
             newP = currP;
             newP.y++;
             move(SOUTH);
 
             recTraverse(newP, SOUTH, g);
+            currP.S = true;
 
             draw(g);
             g.update();
             g.Sleep(SN);
         }
-        cout << endl;
-                    for (int i = 0; i < 20; i++) {
-                for (int j = 0; j < 35; j++) {
-                    cout << graph[j][i].v << " ";
-                }
-                cout << endl;
-            }
+
+
 
         //Check West
-        cout << "Look WEST: " << look(WEST,g) << endl;
+        //cout << "Look WEST: " << look(WEST,g) << endl;
         if (look(WEST,g) != 0 && currP.x > 0 && !graph[currP.y][currP.x-1].v) {
             newP = currP;
             newP.x--;
             move(WEST);
 
             recTraverse(newP, WEST, g);
+            currP.W = true;
 
             draw(g);
             g.update();
             g.Sleep(SN);
         }
-        cout << endl;
-                    for (int i = 0; i < 20; i++) {
-                for (int j = 0; j < 35; j++) {
-                    cout << graph[j][i].v << " ";
-                }
-                cout << endl;
-            }
 
 
         //Check East
-        cout << "Look EAST: " << look(EAST,g) << endl;
+        //cout << "Look EAST: " << look(EAST,g) << endl;
         if (look(EAST,g) != 0 && currP.x < 35 && !graph[currP.y][currP.x+1].v) {
             newP = currP;
             newP.x++;
             move(EAST);
 
             recTraverse(newP, EAST, g);
+            currP.E = true;
 
             draw(g);
             g.update();
             g.Sleep(SN);
         }
-        cout << endl;
-                    for (int i = 0; i < 20; i++) {
-                for (int j = 0; j < 35; j++) {
-                    cout << graph[j][i].v << " ";
-                }
-                cout << endl;
-            }
+
+        graph[currP.y][currP.x] = currP;
+
 
 
         //If you reach this point you hit a dead end
         //Make racer move backwards
+        graph[currP.y][currP.x].wall = true;
         if (d == NORTH && look(SOUTH, g) != 0) {
             move(SOUTH);
         }
@@ -213,25 +226,107 @@ public:
             move(NORTH);
         }
         else if (d == EAST && look(WEST, g) != 0) {
-            if (!currP.start) move (WEST);
+            move (WEST);
         }
         else if (d == WEST && look(EAST, g) != 0) {
             move (EAST);
         }
+
 
         draw(g);
         g.update();
         g.Sleep(SN);
 
 
-        return;
-        /*if(look(d, g) != 0){
-            move(d);
-
-        }*/
+        return false;
     }
 
-    queue<DIRECTION> Djikstras(vector<vector<pair<int,DIRECTION>>> data,int s,int endpoint){
+    queue<DIRECTION> Dijkstras() {
+        const size_t INF = 100000;
+
+        for (int i = 0; i < 20; ++i) {
+            for (int j = 0; j < 35; ++j) {
+                graph[i][j].shortestPath = INF;
+                graph[i][j].pred = nullptr;
+            }
+        }
+
+        graph[0][0].shortestPath = 0;
+
+        queue<pair<int,int>> q;
+
+        q.push(make_pair(0,0));
+
+        while (!q.empty()) {
+            int x, y;
+            x = q.front().first;
+            y = q.front().second;
+
+            q.pop();
+
+            if (graph[x][y].N && y > 0) {
+
+            }
+        }
+    }
+
+    /*queue<DIRECTION> Dijkstras() {
+        //Start at source node
+        pointR currP = graph[0][0];
+
+        //Check Up if up is true
+        for(int i = 0; i < 20; i++){
+            for(int j = 0; j < 35; j++){
+                currP = graph[i][j];
+
+                if (currP.N) {
+                    if (graph[currP.y-1][currP.x].shortestPath > currP.shortestPath+1) {
+                        graph[currP.y-1][currP.x].shortestPath = currP.shortestPath+1;
+                        graph[currP.y-1][currP.x].pred = &currP;
+                        //graph[currP.y-1][currP.x].y
+                    }
+                }
+
+                //Check down if it true
+                if (currP.S) {
+                    if (graph[currP.y+1][currP.x].shortestPath > currP.shortestPath+1) {
+                        graph[currP.y+1][currP.x].shortestPath = currP.shortestPath+1;
+                        graph[currP.y+1][currP.x].pred = &currP;
+                    }
+                }
+
+
+                //Check left if it is true
+                if (currP.E) {
+                    if (graph[currP.y][currP.x+1].shortestPath > currP.shortestPath+1) {
+                        graph[currP.y][currP.x+1].shortestPath = currP.shortestPath+1;
+                        graph[currP.y][currP.x+1].pred = &currP;
+                    }
+                }
+
+                //Check right if it is true
+                if (currP.W) {
+                    if (graph[currP.y][currP.x-1].shortestPath > currP.shortestPath+1) {
+                        graph[currP.y][currP.x-1].shortestPath = currP.shortestPath+1;
+                        graph[currP.y][currP.x-1].pred = &currP;
+                    }
+                }
+            }
+        }
+
+        currP = graph[19][34];
+        queue<DIRECTION> path;
+        /*
+        while (!currP.start) {
+            //Make direction
+            //if (currP.y < )
+
+
+            currP = currP.pred;
+        }
+    }*/
+
+    /*queue<DIRECTION> Djikstras(vector<vector<pair<int,DIRECTION>>> data,int s,int endpoint){
         const int INF = pow(2,31)-1;
         stack<int> backtrack;
         queue<DIRECTION> path;
@@ -289,7 +384,7 @@ public:
         }
 
         return path;
-    }
+    }*/
 
     void followPath(queue<DIRECTION> path){
         move(path.front());
