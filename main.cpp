@@ -67,6 +67,8 @@ int main(int argc, char ** argv)
     Uint32 RGB;
 
     Racer1 robot{};
+    Racer1 robot1{};
+    Racer1 robot2{};
     //Racer* r1 = new Racer1();
 
 	disjointSet cells(row*col);
@@ -107,11 +109,34 @@ int main(int argc, char ** argv)
 
     //racerBase = &racer;
 
+    int count = 0;
+
 
 
     while (!g.getQuit())
     {
+        count++;
     	if(robot.racing()){
+
+            if(runNum == 1){
+                robot.run(g);
+                robot.draw(g);
+            }
+            else if(runNum == 2){
+
+                robot1.run(g);
+                robot1.draw(g);
+            }
+            else if(runNum == 3){
+                robot2.run(g);
+                robot2.draw(g);
+            }
+
+            g.Sleep(10);
+            g.update();
+            if(!legalMove(robot, walls)){
+                cout << "DIE!!!!" << endl;
+            }
 			if(g.kbhit()){
 				switch(toupper(g.getKey())){
 				    case 'F': robot.run(g); break;
@@ -129,11 +154,7 @@ int main(int argc, char ** argv)
 					case 'W': cout << robot.look(NORTH,g) << endl; break;
 					case 'S': cout << robot.look(SOUTH,g) << endl; break;
 				}
-				robot.draw(g);
-				g.update();
-				if(!legalMove(robot, walls)){
-                    cout << "DIE!!!!" << endl;
-				}
+
 
 			}
 
@@ -142,8 +163,18 @@ int main(int argc, char ** argv)
 
     	}
 
+    	if(count % 50 == 0){
+            if(runNum == 1){
+                robot.print();
+            }else if(runNum == 2){
+                robot1.print();
+            }else{
+                robot2.print();
+            }
+    	}
 
     }
+    robot.print();
 }
 
 bool legalMove(Racer& r, const set<pair<int,int> >& walls){
