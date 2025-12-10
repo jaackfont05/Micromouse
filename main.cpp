@@ -162,8 +162,8 @@ int main(int argc, char ** argv)
 			}
 
     	}
-
-    	if(count % 50 == 0){
+/*
+    	if(count % 100 == 0){
             if(runNum == 1){
                 robot.print();
             }else if(runNum == 2){
@@ -172,9 +172,9 @@ int main(int argc, char ** argv)
                 robot2.print();
             }
     	}
-
+*/
     }
-    robot.print();
+    //robot.print();
 }
 
 bool legalMove(Racer& r, const set<pair<int,int> >& walls){
@@ -691,4 +691,3 @@ bool drawSolution2(int start, int current, disjointSet& cells, set<pair<int,int>
 
 	return false;
 }
-
