@@ -215,11 +215,11 @@ public:
             if(graph1[row*2-1][col*2-1].c == 'v'){
                 runNum++;
                 if(build){
-                    cout << "build" << endl;
+                    //cout << "build" << endl;
                     buildAdjMatrix();
                     buildAdjMatrix1();
-                    path1 = Djikstras1(0,adjMatrix.size());
-                    path2 = Djikstras2(0,adjMatrix1.size());
+                    path1 = Djikstras1(0,adjMatrix.size()-1);
+                    path2 = Djikstras2(0,adjMatrix1.size()-1);
                     build = false;
                 }
             }
@@ -255,7 +255,6 @@ public:
     void buildAdjMatrix(){
         int countV = 0;
 
-
         for(int i = 0; i < row*2+1; i++){
             for(int j = 0; j < col*2+1; j++){
                 if(graph[i][j].c == 'v'){
@@ -265,6 +264,8 @@ public:
             }
         }
 
+        //cout << countV << endl;
+
         adjMatrix.resize(countV);
 
         for(int i = 0; i < adjMatrix.size(); i++){
@@ -273,7 +274,7 @@ public:
 
         for(int i = 0; i < row*2+1; i++){
             for(int j = 0; j < col*2+1; j++){
-                if(graph[i][j].c == 'e'){
+                if(graph[i][j].c == 'e' && (i > 0 && i < row*2) && (j > 0 && j < col*2)){
                     if(graph[i][j-1].c == 'v' && graph[i][j+1].c == 'v'){
                         adjMatrix[graph[i][j-1].name][graph[i][j+1].name].first = 1;
                         adjMatrix[graph[i][j-1].name][graph[i][j+1].name].second = EAST;
@@ -283,8 +284,8 @@ public:
                     if(graph[i-1][j].c == 'v' && graph[i+1][j].c == 'v'){
                         adjMatrix[graph[i-1][j].name][graph[i+1][j].name].first = 1;
                         adjMatrix[graph[i-1][j].name][graph[i+1][j].name].second = SOUTH;
-                        adjMatrix[graph[i+1][j].name][graph[i+1][j].name].first = 1;
-                        adjMatrix[graph[i+1][j].name][graph[i+1][j].name].second = NORTH;
+                        adjMatrix[graph[i+1][j].name][graph[i-1][j].name].first = 1;
+                        adjMatrix[graph[i+1][j].name][graph[i-1][j].name].second = NORTH;
                     }
                 }
             }
@@ -311,7 +312,7 @@ public:
 
         for(int i = 0; i < row*2+1; i++){
             for(int j = 0; j < col*2+1; j++){
-                if(graph1[i][j].c == 'e'){
+                if(graph1[i][j].c == 'e' && (i > 0 && i < row*2) && (j > 0 && j < col*2)){
                     if(graph1[i][j-1].c == 'v' && graph1[i][j+1].c == 'v'){
                         adjMatrix1[graph1[i][j-1].name][graph1[i][j+1].name].first = 1;
                         adjMatrix1[graph1[i][j-1].name][graph1[i][j+1].name].second = EAST;
@@ -321,8 +322,8 @@ public:
                     if(graph1[i-1][j].c == 'v' && graph1[i+1][j].c == 'v'){
                         adjMatrix1[graph1[i-1][j].name][graph1[i+1][j].name].first = 1;
                         adjMatrix1[graph1[i-1][j].name][graph1[i+1][j].name].second = SOUTH;
-                        adjMatrix1[graph1[i+1][j].name][graph1[i+1][j].name].first = 1;
-                        adjMatrix1[graph1[i+1][j].name][graph1[i+1][j].name].second = NORTH;
+                        adjMatrix1[graph1[i+1][j].name][graph1[i-1][j].name].first = 1;
+                        adjMatrix1[graph1[i+1][j].name][graph1[i-1][j].name].second = NORTH;
                     }
                 }
             }
@@ -376,10 +377,11 @@ public:
         }
 
         u = backtrack.top();
+        backtrack.pop();
 
         while(!backtrack.empty()){
-            backtrack.pop();
             v = backtrack.top();
+            backtrack.pop();
 
             path.push(adjMatrix[u][v].second);
 
@@ -436,10 +438,11 @@ public:
         }
 
         u = backtrack.top();
+        backtrack.pop();
 
         while(!backtrack.empty()){
-            backtrack.pop();
             v = backtrack.top();
+            backtrack.pop();
 
             path.push(adjMatrix1[u][v].second);
 
