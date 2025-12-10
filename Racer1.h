@@ -59,8 +59,8 @@ private:
             colG++;
             graph[rowG][colG].c = 'e';
             colG++;
-            graph[rowG][colG].c='v';
-            graph[rowG][colG].p=WEST;
+            graph[rowG][colG].c = 'v';
+            graph[rowG][colG].p = WEST;
             return;
         }else if(!check(EAST, g)){
             graph[rowG][colG+1].c = 'w';
@@ -73,7 +73,7 @@ private:
             rowG++;
             graph[rowG][colG].c = 'e';
             rowG++;
-            graph[rowG][colG].c='v';
+            graph[rowG][colG].c = 'v';
             graph[rowG][colG].p = NORTH;
             return;
         }else if(!check(SOUTH, g)){
@@ -87,7 +87,7 @@ private:
             colG--;
             graph[rowG][colG].c = 'e';
             colG--;
-            graph[rowG][colG].c='v';
+            graph[rowG][colG].c = 'v';
             graph[rowG][colG].p = EAST;
             return;
         }else if(!check(WEST, g)){
@@ -101,7 +101,7 @@ private:
             rowG--;
             graph[rowG][colG].c = 'e';
             rowG--;
-            graph[rowG][colG].c='v';
+            graph[rowG][colG].c = 'v';
             graph[rowG][colG].p = SOUTH;
             return;
         }else if(!check(NORTH, g)){
@@ -133,7 +133,7 @@ private:
             rowG1++;
             graph1[rowG1][colG1].c = 'e';
             rowG1++;
-            graph1[rowG1][colG1].c='v';
+            graph1[rowG1][colG1].c = 'v';
             graph1[rowG1][colG1].p = NORTH;
             return;
         }else if(!check(SOUTH, g)){
@@ -147,8 +147,8 @@ private:
             colG1++;
             graph1[rowG1][colG1].c = 'e';
             colG1++;
-            graph1[rowG1][colG1].c='v';
-            graph1[rowG1][colG1].p=WEST;
+            graph1[rowG1][colG1].c = 'v';
+            graph1[rowG1][colG1].p = WEST;
             return;
         }else if(!check(EAST, g)){
             graph1[rowG1][colG1+1].c = 'w';
@@ -161,7 +161,7 @@ private:
             colG1--;
             graph1[rowG1][colG1].c = 'e';
             colG1--;
-            graph1[rowG1][colG1].c='v';
+            graph1[rowG1][colG1].c = 'v';
             graph1[rowG1][colG1].p = EAST;
             return;
         }else if(!check(WEST, g)){
@@ -175,7 +175,7 @@ private:
             rowG1--;
             graph1[rowG1][colG1].c = 'e';
             rowG1--;
-            graph1[rowG1][colG1].c='v';
+            graph1[rowG1][colG1].c = 'v';
             graph1[rowG1][colG1].p = SOUTH;
             return;
         }else if(!check(NORTH, g)){
@@ -199,30 +199,21 @@ private:
 public:
     void run(SDL_Plotter& g){
 
-        if(runNum == 1 && graph[row*2][col*2].c != 'v'){
-            if(colG >= col*2+1 || rowG >= row*2+1){
-                cout << graph[row*2][col*2].c << endl;
-                cout << "out of bounds" << endl;
-                return;
-            }
+        if(runNum == 1 && graph[row*2-1][col*2-1].c != 'v'){
             graph[1][1].c = 'v';
-            traverse1(g);
-            if(graph[row*2][col*2].c == 'v'){
+            if(graph[row*2-1][col*2-1].c != 'v'){
+                traverse1(g);
+            }
+            if(graph[row*2-1][col*2-1].c == 'v'){
                 runNum++;
-                cout << " run: " << runNum << endl;
             }
         }
 
-        if(runNum == 2 && graph1[row*2][col*2].c != 'v'){
-            if(colG1 >= col*2+1 || rowG1 >= row*2+1){
-                cout << "out of bounds" << endl;
-                return;
-            }
+        if(runNum == 2 && graph1[row*2-1][col*2-1].c != 'v'){
             graph1[1][1].c = 'v';
             traverse2(g);
-            if(graph1[row*2][col*2].c == 'v'){
+            if(graph1[row*2-1][col*2-1].c == 'v'){
                 runNum++;
-                cout << " run2: " << runNum << endl;
                 if(build){
                     cout << "build" << endl;
                     buildAdjMatrix();
@@ -234,7 +225,7 @@ public:
             }
         }
 
-        if(runNum == 3 && graph[row*2][col*2].c == 'v' && graph1[row*2][col*2].c != 'v'){
+        if(runNum == 3 && graph[row*2-1][col*2-1].c == 'v' && graph1[row*2-1][col*2-1].c == 'v'){
             followPath();
         }
 
