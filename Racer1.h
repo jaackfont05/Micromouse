@@ -211,7 +211,9 @@ public:
 
         if(runNum == 2 && graph1[row*2-1][col*2-1].c != 'v'){
             graph1[1][1].c = 'v';
-            traverse2(g);
+            if(graph1[row*2-1][col*2-1].c != 'v'){
+                traverse2(g);
+            }
             if(graph1[row*2-1][col*2-1].c == 'v'){
                 runNum++;
                 if(build){
