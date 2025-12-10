@@ -1,3 +1,11 @@
+//Team 1
+//Authors
+//Jack Fontenot
+//Andrei Kuvshinikov
+//Brandon Vowell
+//Connor Griffin
+//Diego Diaz
+
 #ifndef RACER1_H_
 #define RACER1_H_
 
@@ -11,43 +19,71 @@
 
 using namespace std;
 
+//custom comparator for Djikstra's
 struct Compare{
     bool operator()(pair<int,int> a, pair<int,int> b){
         return a.second > b.second;
     }
 };
 
+//data structure for a point
 struct pointR{
+    //visited marker
     bool v = false;
+
+    //direction markers
     bool E = false;
     bool N = false;
     bool W = false;
     bool S = false;
+
+    //direction of predecessor
     DIRECTION p;
+
+    //character for displaying the type of point (wall, vertex, edge)
     char c = '*';
+
+    //name of point (int)
     int name = -1;
 };
 
+//static arrays of pointRs to hold the maze info
 static pointR graph[row*2+1][col*2+1];
 static pointR graph1[row*2+1][col*2+1];
+
+//used for position in first traversal
 static int rowG = 1;
 static int colG = 1;
+
+//used for position in second traversal
 static int rowG1 = 1;
 static int colG1 = 1;
+
+//used to determine which run
 static int runNum = 1;
+
+//data structures used for holding the graph after traversal 1 and 2
 static vector<vector<pair<int,DIRECTION>>> adjMatrix;
 static vector<vector<pair<int,DIRECTION>>> adjMatrix1;
+
+//used to hold directions of shortest path to finish point
 static queue<DIRECTION> path1;
 static queue<DIRECTION> path2;
+
+//used to mark when the graph should be built
 static bool build = true;
 
 class Racer1 : public Racer{
 private:
 
+    //checks what is in that direction
+    //returns true if point in the direction is white
+    //return false if point in the direction is a wall
     bool check(DIRECTION d, SDL_Plotter& g){
         return look(d, g) != 0;
     }
 
+    //first traversal of graph (DFS)
     void traverse1(SDL_Plotter& g){
 
 
@@ -57,8 +93,10 @@ private:
             move(EAST);
             graph[rowG][colG].E = true;
             colG++;
+            //mark adjacent point as edge
             graph[rowG][colG].c = 'e';
             colG++;
+            //mark next point as a vertex
             graph[rowG][colG].c = 'v';
             graph[rowG][colG].p = WEST;
             return;
@@ -71,8 +109,10 @@ private:
             move(SOUTH);
             graph[rowG][colG].S = true;
             rowG++;
+            //mark adjacent point as edge
             graph[rowG][colG].c = 'e';
             rowG++;
+            //mark next point as a vertex
             graph[rowG][colG].c = 'v';
             graph[rowG][colG].p = NORTH;
             return;
@@ -85,8 +125,10 @@ private:
             move(WEST);
             graph[rowG][colG].W = true;
             colG--;
+            //mark adjacent point as edge
             graph[rowG][colG].c = 'e';
             colG--;
+            //mark next point as a vertex
             graph[rowG][colG].c = 'v';
             graph[rowG][colG].p = EAST;
             return;
@@ -99,8 +141,10 @@ private:
             move(NORTH);
             graph[rowG][colG].N = true;
             rowG--;
+            //mark adjacent point as edge
             graph[rowG][colG].c = 'e';
             rowG--;
+            //mark next point as a vertex
             graph[rowG][colG].c = 'v';
             graph[rowG][colG].p = SOUTH;
             return;
@@ -108,8 +152,7 @@ private:
             graph[rowG-1][colG].c = 'w';
         }
 
-        //backtrack
-
+        //backtrack in direction of predecessor
         move(graph[rowG][colG].p);
         if(graph[rowG][colG].p == WEST){
             colG -= 2;
@@ -123,6 +166,7 @@ private:
 
     }
 
+    //second traversal of graph (DFS)
     void traverse2(SDL_Plotter& g){
 
 
@@ -131,8 +175,10 @@ private:
             move(SOUTH);
             graph1[rowG1][colG1].S = true;
             rowG1++;
+            //mark adjacent point as edge
             graph1[rowG1][colG1].c = 'e';
             rowG1++;
+            //mark next point as a vertex
             graph1[rowG1][colG1].c = 'v';
             graph1[rowG1][colG1].p = NORTH;
             return;
@@ -145,8 +191,10 @@ private:
             move(EAST);
             graph1[rowG1][colG1].E = true;
             colG1++;
+            //mark adjacent point as edge
             graph1[rowG1][colG1].c = 'e';
             colG1++;
+            //mark next point as a vertex
             graph1[rowG1][colG1].c = 'v';
             graph1[rowG1][colG1].p = WEST;
             return;
@@ -159,8 +207,10 @@ private:
             move(WEST);
             graph1[rowG1][colG1].W = true;
             colG1--;
+            //mark adjacent point as edge
             graph1[rowG1][colG1].c = 'e';
             colG1--;
+            //mark next point as a vertex
             graph1[rowG1][colG1].c = 'v';
             graph1[rowG1][colG1].p = EAST;
             return;
@@ -173,8 +223,10 @@ private:
             move(NORTH);
             graph1[rowG1][colG1].N = true;
             rowG1--;
+            //mark adjacent point as edge
             graph1[rowG1][colG1].c = 'e';
             rowG1--;
+            //mark next point as a vertex
             graph1[rowG1][colG1].c = 'v';
             graph1[rowG1][colG1].p = SOUTH;
             return;
@@ -182,8 +234,7 @@ private:
             graph1[rowG1-1][colG1].c = 'w';
         }
 
-        //backtrack
-
+        //backtrack in direction of predecessor
         move(graph1[rowG1][colG1].p);
         if(graph1[rowG1][colG1].p == WEST){
             colG1 -= 2;
@@ -197,27 +248,32 @@ private:
 
     }
 public:
+    //determines what phase the mouse is currently in
     void run(SDL_Plotter& g){
 
+        //first traversal
         if(runNum == 1 && graph[row*2-1][col*2-1].c != 'v'){
             graph[1][1].c = 'v';
             if(graph[row*2-1][col*2-1].c != 'v'){
                 traverse1(g);
             }
+            //enters this if at finish point
             if(graph[row*2-1][col*2-1].c == 'v'){
                 runNum++;
             }
         }
 
+        //second traversal
         if(runNum == 2 && graph1[row*2-1][col*2-1].c != 'v'){
             graph1[1][1].c = 'v';
             if(graph1[row*2-1][col*2-1].c != 'v'){
                 traverse2(g);
             }
+            //enters if at finish point
             if(graph1[row*2-1][col*2-1].c == 'v'){
                 runNum++;
+                //builds graphs and runs Djikstras
                 if(build){
-                    //cout << "build" << endl;
                     buildAdjMatrix();
                     buildAdjMatrix1();
                     path1 = Djikstras1(0,adjMatrix.size()-1);
@@ -227,6 +283,7 @@ public:
             }
         }
 
+        //last traversal (follows shortest path)
         if(runNum == 3 && graph[row*2-1][col*2-1].c == 'v' && graph1[row*2-1][col*2-1].c == 'v'){
             followPath();
         }
@@ -234,6 +291,7 @@ public:
 
     }
 
+    //prints out graphs for testing
     void print(){
         cout << endl;
 
@@ -254,6 +312,7 @@ public:
         }
     }
 
+    //builds the adjacency matrix based off first traversal
     void buildAdjMatrix(){
         int countV = 0;
 
@@ -265,8 +324,6 @@ public:
                 }
             }
         }
-
-        //cout << countV << endl;
 
         adjMatrix.resize(countV);
 
@@ -294,6 +351,7 @@ public:
         }
     }
 
+    //builds the adjacency matrix based off second traversal
     void buildAdjMatrix1(){
         int countV = 0;
 
@@ -332,6 +390,7 @@ public:
         }
     }
 
+    //finds shortest path from start to finish based off first traversal graph
     queue<DIRECTION> Djikstras1(int s,int endpoint){
         const int INF = pow(2,31)-1;
         stack<int> backtrack;
@@ -393,6 +452,7 @@ public:
         return path;
     }
 
+    //finds shortest path from start to finish based off second traversal graph
     queue<DIRECTION> Djikstras2(int s,int endpoint){
         const int INF = pow(2,31)-1;
         stack<int> backtrack;
@@ -454,6 +514,7 @@ public:
         return path;
     }
 
+    //follows the shortest possible path
     void followPath(){
         if(path1.size() < path2.size()){
             move(path1.front());
@@ -469,259 +530,6 @@ public:
         }
     }
 
-/*
-
-struct edge;
-
-struct vert{
-    pair<int, int> name;
-    vert* pred;
-    vector<edge*> edges;
-    int d;
-    char stat = 'U';
-    vert(pair<int, int> name): name(name){}
-};
-
-struct edge{
-    vert* s;
-    vert* d;
-    int w;
-
-    edge(vert* s, vert* d, int w){
-        this->s = s;
-        this->d = d;
-        this->w = w;
-    }
-
-    //gets the adjacent point to a
-    vert* getO(vert* a){
-        vert* res = s;
-
-        if(a == s){
-            res = d;
-        }
-
-        return res;
-    }
-
-    //checks if edge is outgoing from a
-    bool isOut(vert* a){
-        bool flag = true;
-
-        if(a == d){
-            flag = false;
-        }
-
-        return flag;
-    }
-};
-
-struct comp{
-    bool operator()(const vert* a, const vert* b){
-        return a->d > b->d;
-    }
-};
-    //Djikstra
-    void djikstra1(vector<vector<point*>>& g, point* s){
-        priority_queue<vert*, vector<vert*>, comp> q;
-        vert* u = nullptr;
-        edge* e = nullptr;
-        vert* v = nullptr;
-        vector<vert*> pop;
-
-        for(size_t i = 0; i < g.size(); ++i){
-            //set D[v] to infinity
-            g.at(i)->d = 1000000;
-        }
-
-        //set source predecessor and D[s]
-        s->d = 0;
-        s->pred = new vert(make_pair(-1, -1));
-
-        for(size_t i = 0; i < g.size(); ++i){
-            //set priority q
-            q.push(g.at(i).front());
-        }
-
-        while(!q.empty()){
-            u = q.top();
-            q.pop();
-            //add it to popped list
-            pop.push_back(u);
-            for(size_t i = 0; i < u->edges.size(); ++i){
-                e = u->edges.at(i);
-                v = e->getO(u);
-
-                if(!contains(pop, v)){
-                    if(u->d + e->w < v->d){
-                        v->d = u->d + e->w;
-                        v->pred = u;
-
-                        //for making sure the priority q reorders
-                        q.push(s);
-                        q.pop();
-
-                    }
-                }
-            }
-        }
-
-    }
-
-    void djikstra2(vector<vector<point*>>& g, point* s){
-        priority_queue<vert*, vector<vert*>, comp> q;
-        vert* u = nullptr;
-        edge* e = nullptr;
-        vert* v = nullptr;
-        vector<vert*> pop;
-
-        for(size_t i = 0; i < g.size(); ++i){
-            //set D[v] to infinity
-            g.at(i)->d = 1000000;
-        }
-
-        //set source predecessor and D[s]
-        s->d = 0;
-        s->pred = new vert(make_pair(-1, -1));
-
-        for(size_t i = 0; i < g.size(); ++i){
-            //set priority q
-            q.push(g.at(i).front());
-        }
-
-        while(!q.empty()){
-            u = q.top();
-            q.pop();
-            //add it to popped list
-            pop.push_back(u);
-            for(size_t i = 0; i < u->edges.size(); ++i){
-                e = u->edges.at(i);
-                v = e->getO(u);
-
-                if(!contains(pop, v)){
-                    if(u->d + e->w < v->d){
-                        v->d = u->d + e->w;
-                        v->pred = u;
-
-                        //for making sure the priority q reorders
-                        q.push(s);
-                        q.pop();
-
-                    }
-                }
-            }
-        }
-
-    }
-
-    //build adj list
-    void buildList(){
-        int v1, v2;
-        int x1, x2;
-        vector<vert*> g;
-        vector<edge*> edgeH;
-        vector<pair<int, int>> nums;
-        vert* p1 = nullptr;
-        vert* p2 = nullptr;
-        edge* e = nullptr;
-
-
-
-
-
-
-        //m edges
-        for(int i = 0; i < totalVs.size()-1; ++i){
-
-            v1 = totalVs.at(i).first;
-            v2 = totalVs.at(i).second;
-
-            x1 = totalVs.at(i+1).first;
-            x2 = totalVs.at(i+1).second;
-
-            //first input
-            if(i == 0){
-                nums.push_back(make_pair(v1, v2));
-                nums.push_back(make_pair(x1, x2));
-
-                p1 = new point(v1);
-                p2 = new point(v2);
-
-                e = new edge(p1, p2, w);
-                //edge holder for BF
-                edgeH.push_back(e);
-                p1->edges.push_back(e);
-
-                g.at(v1).push_back(p1);
-                g.at(v1).push_back(p2);
-
-                g.at(v2).push_back(p2);
-
-                //input 2+
-            }else if(v1 != v2){
-                if(!contains(nums, make_pair(v1, v2))){
-                    p1 = new point(make_pair(v1, v2));
-                    g.push_back(p1);
-                }else{
-                    p1 = find(g, make_pair(v1, v2));
-                }
-
-                if(!contains(nums, make_pair(x1, x2))){
-                    p2 = new point(make_pair(x1, x2));
-                    g.push_back(p2);
-                }else{
-                    p2 = find(g, make_pair(x1, x2));
-                }
-
-                e = new edge(p1, p2, 1);
-
-                edgeH.push_back(e);
-                p1->edges.push_back(e);
-                p2->edges.push_back(e);
-            }
-        }
-    }
-
-    vert* find(vector<vert*> g, pair<int, int> f){
-        vert* res = nullptr;
-
-        for(int i = 0; i < g.size(); ++i){
-            if(f.first == g.at(i)->name.first && f.second == g.at(i)->name.second){
-                res = g.at(i);
-            }
-        }
-
-        return vert;
-    }
-
-    bool contains(vector<pair<int, int>>& nums, pair<int, int> f){
-        bool flag = false;
-
-        for(int i = 0; i < nums.size(); ++i){
-            if(f.first == nums.at(i).first && f.second == nums.at(i).second){
-                flag = true;
-            }
-        }
-
-        if(!flag){
-            nums.push_back(f);
-        }
-
-        return flag;
-    }
-
-    bool contains(vector<vert*>& verts, vert* v){
-        bool flag = false;
-
-        for(int i = 0; i < verts.size(); ++i){
-            if(verts.at(i) == v){
-                flag = true;
-            }
-        }
-
-        return flag;
-    }
-    */
 };
 
 
